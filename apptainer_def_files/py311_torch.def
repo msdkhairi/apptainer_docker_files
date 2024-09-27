@@ -1,0 +1,73 @@
+Bootstrap: docker
+From: python:3.11
+
+%environment
+    export DEBIAN_FRONTEND=noninteractive
+
+%post
+  apt-get update && \
+  apt-get install -y --no-install-recommends \
+      ca-certificates \
+      build-essential \
+      git \
+      curl \
+      wget \
+      tmux \
+      htop \
+      nano \
+      vim \
+      pipx \
+      libreadline-dev \
+      libncursesw5-dev \
+      libssl-dev \
+      libsqlite3-dev \
+      libgdbm-dev \
+      libc6-dev \
+      libbz2-dev \
+      libffi-dev \
+      libpq-dev \
+      liblzma-dev \
+      libopenblas-dev \
+      libgl1-mesa-dev \
+      libglib2.0-0 \
+      libsm6 \
+      libxext6 \
+      ffmpeg \
+      tk-dev \
+      ninja-build && \
+  apt-get update && \
+  apt-get full-upgrade -y && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
+
+  # Create the app directory at the top level of the container's filesystem
+  mkdir -p /app
+
+  # Navigate to the app directory
+  cd /app
+
+  # Create a virtual environment
+  python -m venv myenv
+
+  # Activate the virtual environment
+  . /app/myenv/bin/activate
+
+  # Upgrade pip
+  pip install --no-cache-dir --upgrade pip
+
+  # Install dependencies
+  echo "Installing Python dependencies..."
+  pip install --no-cache-dir torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cu121
+  pip install --no-cache-dir lightning==2.3.3 tensorboard pycocotools matplotlib mlflow==2.14.3 cuda-python torchmetrics opencv-python-headless boto3 ipykernel
+  pip install mmcv==2.2.0 -f https://download.openmmlab.com/mmcv/dist/cu121/torch2.3/index.html
+
+%environment
+  # Set the environment variable to activate the virtual environment by default
+  . /app/myenv/bin/activate
+
+%runscript
+  # Activate the virtual environment
+  . /app/myenv/bin/activate
+  
+  # Run the given command
+  exec "$@"

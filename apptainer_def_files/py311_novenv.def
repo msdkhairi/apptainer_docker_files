@@ -1,0 +1,19 @@
+Bootstrap: docker
+#From: python:latest
+#From: python:3.11-slim
+From: python:3.11
+
+%post
+  # Create the app directory
+  mkdir -p /app
+
+  # Upgrade pip
+  pip install --upgrade pip
+
+  # Install dependencies
+  echo "Installing Python dependencies..."
+  pip install --no-cache-dir torch torchvision torchaudio lightning tensorboard pycocotools matplotlib mlflow
+
+%runscript
+  # Run the given command
+  exec "$@"

@@ -1,0 +1,34 @@
+Bootstrap: docker
+From: python:3.10
+
+%post
+  # Create the app directory at the top level of the container's filesystem
+  mkdir -p /app
+
+  # Navigate to the app directory
+  cd /app
+
+  # Create a virtual environment
+  python -m venv myenv
+
+  # Activate the virtual environment
+  . /app/myenv/bin/activate
+
+  # Upgrade pip
+  pip install --no-cache-dir --upgrade pip
+
+  # Install dependencies
+  echo "Installing Python dependencies..."
+  pip install --no-cache-dir torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cu121 lightning=2.2.4 tensorboard pycocotools matplotlib mlflow
+  #pip install --no-cache-dir torch torchvision torchaudio lightning=2.2.4 tensorboard pycocotools matplotlib mlflow
+
+%environment
+  # Set the environment variable to activate the virtual environment by default
+  . /app/myenv/bin/activate
+
+%runscript
+  # Activate the virtual environment
+  . /app/myenv/bin/activate
+  
+  # Run the given command
+  exec "$@"

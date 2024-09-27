@@ -1,0 +1,117 @@
+Bootstrap: docker
+From: almalinux:9
+
+%post
+  # Create the app directory at the top level of the container's filesystem
+  mkdir -p /app && \
+
+  # Install EPEL repository and update the system
+  dnf update -y && \
+  dnf install -y epel-release && \
+  dnf update -y && \
+  /usr/bin/crb enable && \
+  dnf groupinstall -y "Development Tools" && \
+
+  # Install additional dependencies
+  dnf install -y --allowerasing \
+      ca-certificates \
+      git \
+      curl \
+      wget \
+      tmux \
+      htop \
+      nano \
+      vim \
+      gcc \
+      gcc-c++ \
+      cmake \
+      make \
+      readline-devel \
+      ncurses-devel \
+      openssl-devel \
+      sqlite-devel \
+      gdbm-devel \
+      glibc \
+      glibc-devel \
+      gtk2-devel \
+      libffi-devel \
+      libpq-devel \
+      openblas-devel \
+      libpng-devel \
+      jasper-devel \
+      openexr-devel \
+      libwebp-devel \
+      libjpeg-turbo-devel \
+      libtiff-devel \
+      tbb-devel \
+      libv4l-devel \
+      eigen3-devel \
+      freeglut-devel \
+      mesa-libGL \
+      mesa-libGL-devel \
+      boost \
+      boost-thread \
+      boost-devel \
+      gstreamer1-plugins-base \
+      bzip2-devel \
+      libffi-devel \
+      libpq-devel \
+      xz-devel \
+      openblas-devel \
+      glib2 \
+      glib2-devel \
+      libdc1394-devel \
+      xine-lib-devel \
+      gstreamer1-plugins-base \
+      gstreamer1-devel \
+      qt5-qtbase-devel \
+      atlas-devel \
+      fdk-aac-free-devel \
+      lame-devel \
+      libtheora-devel \
+      libvorbis-devel \
+      xvidcore-devel \
+      opencore-amr-devel \
+      protobuf-devel \
+      protobuf-compiler \
+      libSM \
+      libXext \
+      tk-devel \
+      opencv \
+      opencv-devel \
+      ninja-build && \
+  dnf clean all && \
+  rm -rf /var/cache/dnf && \
+
+  # dnf install x264 x265 v4l-utils ffmpeg-devel
+  
+  # Install Python 3.11 from the EPEL repository
+  dnf install -y python3.11 python3.11-devel python3-pip && \
+  
+  # Create a symlink for python3 to point to python3.11
+  # alternatives --set python3 /usr/bin/python3.11 && \
+
+  # Create and activate virtual environment
+  python3.11 -m venv /app/virt_env && \
+  . /app/virt_env/bin/activate && \
+
+  # Upgrade pip
+  pip install --no-cache-dir --upgrade pip && \
+
+  # Install dependencies
+  echo "Installing Python dependencies..." && \
+  pip install --no-cache-dir torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cu121 && \
+  pip install --no-cache-dir cuda-python==12.1.0 lightning==2.3.3 mlflow==2.15.0 torchmetrics tensorboard pycocotools matplotlib opencv-python boto3 ipykernel psutil && \
+  pip install --no-cache-dir mmcv==2.2.0 -f https://download.openmmlab.com/mmcv/dist/cu121/torch2.3/index.html && \
+  pip install --no-cache-dir xformers==0.0.27 --index-url https://download.pytorch.org/whl/cu121
+
+%environment
+  # Set the environment variable to activate the virtual environment by default
+  . /app/virt_env/bin/activate
+
+%runscript
+  # Activate the virtual environment
+  . /app/virt_env/bin/activate && \
+  
+  # Run the given command
+  exec "$@"

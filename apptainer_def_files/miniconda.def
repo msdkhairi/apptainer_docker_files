@@ -1,0 +1,50 @@
+Bootstrap: docker
+From: continuumio/miniconda3
+
+%environment
+  export DEBIAN_FRONTEND=noninteractive
+
+%post
+  apt-get update && \
+  apt-get install -y --no-install-recommends \
+      ca-certificates \
+      build-essential \
+      git \
+      curl \
+      tmux \
+      htop \
+      nano \
+      vim \
+      pipx \
+      libreadline-dev \
+      libncursesw5-dev \
+      libssl-dev \
+      libsqlite3-dev \
+      libgdbm-dev \
+      libc6-dev \
+      libbz2-dev \
+      libffi-dev \
+      libpq-dev \
+      liblzma-dev \
+      libopenblas-dev \
+      libgl1-mesa-dev \
+      libglib2.0-0 \
+      libsm6 \
+      libxext6 \
+      ffmpeg \
+      tk-dev \
+      ninja-build && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
+
+  # run conda init and source bashrc
+  conda init bash
+
+  . /root/.bashrc
+  
+  # Create a directory for project files
+  mkdir -p /project
+
+%runscript
+  # Run the command using the script
+  exec "$@"
