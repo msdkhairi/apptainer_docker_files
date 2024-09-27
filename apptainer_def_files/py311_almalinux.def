@@ -101,7 +101,7 @@ From: almalinux:9
   # Install dependencies
   echo "Installing Python dependencies..." && \
   pip install --no-cache-dir torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cu121 && \
-  pip install --no-cache-dir cuda-python==12.1.0 lightning==2.3.3 mlflow==2.15.0 torchmetrics tensorboard pycocotools matplotlib opencv-python boto3 ipykernel psutil && \
+  pip install --no-cache-dir cuda-python==12.1.0 lightning==2.3.3 mlflow==2.15.1 torchmetrics tensorboard pycocotools matplotlib opencv-python boto3 ipykernel psutil && \
   pip install --no-cache-dir mmcv==2.2.0 -f https://download.openmmlab.com/mmcv/dist/cu121/torch2.3/index.html && \
   pip install --no-cache-dir xformers==0.0.27 --index-url https://download.pytorch.org/whl/cu121
 
