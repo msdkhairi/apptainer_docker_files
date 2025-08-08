@@ -58,9 +58,6 @@ RUN echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir poetry ansible keyring yq sagecipher awscli pyasyncore 
 
-# Add ssh-ccdb function to .bashrc to connect to CCDB servers (cedar, beluga, narval)
-RUN echo 'ssh-ccdb() {\n    local server\n    case $1 in\n        cedar)\n            server="cedar.alliancecan.ca"\n            ;;\n        beluga)\n            server="beluga.alliancecan.ca"\n            ;;\n        narval)\n            server="narval.alliancecan.ca"\n            ;;\n        *)\n            echo "Usage: ssh-ccdb {cedar|beluga|narval}"\n            return 1\n            ;;\n    esac\n    ssh mka267@$server\n}' >> ~/.bashrc
-
 # Enable color support for ls and grep in .bashrc
 RUN echo 'if [ -x /usr/bin/dircolors ]; then\n    eval "$(dircolors -b)"\n    alias ls="ls --color=auto"\n    alias grep="grep --color=auto"\n    alias fgrep="fgrep --color=auto"\n    alias egrep="egrep --color=auto"\nfi' >> ~/.bashrc
 
